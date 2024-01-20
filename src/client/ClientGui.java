@@ -8,9 +8,12 @@ import javax.swing.border.Border;
 import java.io.IOException;
 
 class ClientGui {
+    final ClientSock conn;
+    JFrame frame;
+    CardLayout card;
     final int height = 500;
     final int width = 800;
-    final ClientSock conn;
+    final int textFieldCols = 15;
     final Border border = BorderFactory.createLineBorder(Color.black);
 
     ClientGui(ClientSock conn) {
@@ -18,14 +21,51 @@ class ClientGui {
     }
 
     void show() {
-        JFrame frame = new JFrame("Inventory Management System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(700, 400);
+        this.frame = new JFrame("Inventory Management System");
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setSize(this.width, this.height);
+
+        this.card = new CardLayout();
+        this.frame.setLayout(this.card);
+
+        // Normal panel (First view)
+        JPanel mainPanel = makeMainPanel();
+        this.frame.add("mainPanel", mainPanel);
 
         // Panel for adding new product in inventory
-        JPanel addPanel = new JPanel();
+        JPanel addPanel = makeAddPanel();
+        this.frame.add("addPanel", addPanel);
 
-        final int textFieldCols = 15;
+        // Close the connection when window closes
+        this.frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent ev) {
+                try {
+                    conn.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    System.out.println("Error while trying to close client socket from GUI");
+                }
+            }
+        });
+
+        this.frame.setVisible(true);
+    }
+
+    private JPanel makeMainPanel() {
+        JPanel container = new JPanel();
+        JButton newProductButton = new JButton("+ New Product");
+        JButton refreshButton = new JButton("Refresh");
+        newProductButton.addActionListener(e -> this.card.show(this.frame.getContentPane(), "addPanel"));
+        refreshButton.addActionListener(e -> System.out.println("Refreshing product list..."));
+
+        addChildren(container, newProductButton, refreshButton, new JLabel("Main panel"));
+        return container;
+    }
+
+    private JPanel makeAddPanel() {
+        JPanel container = new JPanel();
+
         JPanel namePanel = new JPanel(new FlowLayout());
         JLabel nameLabel = new JLabel("Product Name");
         JTextField nameField = new JTextField(textFieldCols);
@@ -43,46 +83,30 @@ class ClientGui {
 
         // Button for adding new product to inventory
         JButton addButton = new JButton("Add");
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                try {
-                    String name = nameField.getText().trim();
-                    String desc = descArea.getText().trim();
-                    if (name.isEmpty())
-                        throw new Exception("Invalid name");
-                    int quantity = Integer.parseInt(qtyField.getText());
-                    if (quantity < 1)
-                        throw new Exception("Invalid quantity");
+        addButton.addActionListener(ev -> {
+            try {
+                String name = nameField.getText().trim();
+                String desc = descArea.getText().trim();
+                if (name.isEmpty())
+                    throw new Exception("Invalid name");
+                int quantity = Integer.parseInt(qtyField.getText());
+                if (quantity < 1)
+                    throw new Exception("Invalid quantity");
 
-                    ClientGui.this.conn.sendProductAddRequest(name, quantity, desc);
+                this.conn.sendProductAddRequest(name, quantity, desc);
 
-                } catch (Exception ex) {
-                    String msg = ex instanceof NumberFormatException ? "Invalid quantity" : ex.getMessage();
-                    JOptionPane.showMessageDialog(frame, msg);
-                }
+            } catch (Exception ex) {
+                String msg = ex instanceof NumberFormatException ? "Invalid quantity" : ex.getMessage();
+                JOptionPane.showMessageDialog(this.frame, msg);
             }
         });
 
-        // Add everything to main frame
-        addChildren(addPanel, namePanel, qtyPanel, descPanel, addButton);
+        // Button to go back to main panel
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(e -> this.card.show(this.frame.getContentPane(), "mainPanel"));
 
-        // Close the connection when window closes
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent ev) {
-                // Close the socket when the window is closing
-                try {
-                    conn.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    System.out.println("Error while trying to close client socket from GUI");
-                }
-            }
-        });
-
-        frame.add(addPanel);
-        frame.setVisible(true);
+        addChildren(container, namePanel, qtyPanel, descPanel, addButton, backButton);
+        return container;
     }
 
     /**
