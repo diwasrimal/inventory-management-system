@@ -27,9 +27,7 @@ class ClientSock {
     /**
      * Sends message to server for adding a new product
      */
-    void sendProductAddRequest(String name, int quantity, String description) {
-        System.out.println("Adding product: name: " + name + ", qty: " + quantity + ", desc: " + description);
-        Product prod = new Product(name, quantity, description);
+    void sendProductAddRequest(Product prod) {
         this.streams.sendMessage(new ProductAddRequest(prod));
     }
 }

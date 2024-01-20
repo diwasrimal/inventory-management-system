@@ -7,6 +7,8 @@ import java.awt.event.*;
 import javax.swing.border.Border;
 import java.io.IOException;
 
+import utils.Product;
+
 class ClientGui {
     final ClientSock conn;
     JFrame frame;
@@ -84,21 +86,9 @@ class ClientGui {
         // Button for adding new product to inventory
         JButton addButton = new JButton("Add");
         addButton.addActionListener(ev -> {
-            try {
-                String name = nameField.getText().trim();
-                String desc = descArea.getText().trim();
-                if (name.isEmpty())
-                    throw new Exception("Invalid name");
-                int quantity = Integer.parseInt(qtyField.getText());
-                if (quantity < 1)
-                    throw new Exception("Invalid quantity");
-
-                this.conn.sendProductAddRequest(name, quantity, desc);
-
-            } catch (Exception ex) {
-                String msg = ex instanceof NumberFormatException ? "Invalid quantity" : ex.getMessage();
-                JOptionPane.showMessageDialog(this.frame, msg);
-            }
+            Product prod = getProductFromFields(nameField, qtyField, descArea);
+            if (prod != null)
+                this.conn.sendProductAddRequest(prod);
         });
 
         // Button to go back to main panel
@@ -107,6 +97,28 @@ class ClientGui {
 
         addChildren(container, namePanel, qtyPanel, descPanel, addButton, backButton);
         return container;
+    }
+
+    /**
+     * Makes a {@code Product} object from provided input fields. In case of errors,
+     * null is returned.
+     */
+    private Product getProductFromFields(JTextField nameField, JTextField qtyField, JTextArea descArea) {
+        Product prod = null;
+        try {
+            String name = nameField.getText().trim();
+            String desc = descArea.getText().trim();
+            if (name.isEmpty())
+                throw new Exception("Invalid name");
+            int quantity = Integer.parseInt(qtyField.getText());
+            if (quantity < 1)
+                throw new Exception("Invalid quantity");
+            prod =  new Product(name, quantity, desc);
+        } catch (Exception e) {
+            String msg = e instanceof NumberFormatException ? "Invalid quantity" : e.getMessage();
+            JOptionPane.showMessageDialog(this.frame, msg);
+        }
+        return prod;
     }
 
     /**
