@@ -5,23 +5,25 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.border.Border;
-import java.io.IOException;
 
 import utils.Product;
 
 class ClientGui {
     final ClientSock conn;
-    JFrame frame;
-    CardLayout card;
-    final int height = 500;
-    final int width = 800;
-    final int textFieldCols = 15;
-    final Border border = BorderFactory.createLineBorder(Color.black);
+    private JFrame frame;
+    private CardLayout card;
+    private final int height = 500;
+    private final int width = 800;
+    private final int textFieldCols = 15;
+    private final Border border = BorderFactory.createLineBorder(Color.black);
 
     ClientGui(ClientSock conn) {
         this.conn = conn;
     }
 
+    /**
+     * Shows the gui by showing main frame
+     */
     void show() {
         this.frame = new JFrame("Inventory Management System");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -42,16 +44,18 @@ class ClientGui {
         this.frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent ev) {
-                try {
-                    conn.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    System.out.println("Error while trying to close client socket from GUI");
-                }
+                conn.close();
             }
         });
 
         this.frame.setVisible(true);
+    }
+
+    /**
+     * Closes the GUI by closing main frame
+     */
+    void close() {
+        this.frame.dispose();
     }
 
     private JPanel makeMainPanel() {
@@ -116,9 +120,13 @@ class ClientGui {
             prod =  new Product(name, quantity, desc);
         } catch (Exception e) {
             String msg = e instanceof NumberFormatException ? "Invalid quantity" : e.getMessage();
-            JOptionPane.showMessageDialog(this.frame, msg);
+            showDialog(msg);
         }
         return prod;
+    }
+
+    void showDialog(String message) {
+        JOptionPane.showMessageDialog(this.frame, message);
     }
 
     /**

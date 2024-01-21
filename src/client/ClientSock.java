@@ -18,10 +18,20 @@ class ClientSock {
     }
 
     /**
-     * Closes client connection by sending di
+     * Closes client connection, invoked mainly when a disconnect message
+     * is received.
      */
-    void close() throws IOException {
-        this.sock.close();
+    void close() {
+        try {
+            this.sock.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error while trying to close connection from client side");
+        }
+    }
+
+    boolean isClosed() {
+        return this.sock.isClosed();
     }
 
     /**
@@ -29,5 +39,13 @@ class ClientSock {
      */
     void sendProductAddRequest(Product prod) {
         this.streams.sendMessage(new ProductAddRequest(prod));
+    }
+
+    void sendMessage(Object msg) {
+        this.streams.sendMessage(msg);
+    }
+
+    Object receiveMessage() {
+        return this.streams.receiveMessage();
     }
 }

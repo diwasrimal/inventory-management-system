@@ -6,6 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import messages.Disconnect;
+
 /**
  * Initializes a pair of {@code ObjectInputStream} and {@code ObjectOutputStream}
  * for communicating to other socket endpoint.
@@ -29,6 +31,9 @@ public class ObjStreams {
         return null;
     }
 
+    /**
+     * Sends message to other endpoint
+     */
     public void sendMessage(Object msg) {
         try {
             this.out.writeObject(msg);
@@ -38,11 +43,15 @@ public class ObjStreams {
         }
     }
 
-    public Object receiveMessage() throws EOFException {
+    /**
+     * Receives message sent from other endpoint.
+     * If EOFException is thrown while reading, a Disconnect message is returned.
+     */
+    public Object receiveMessage() {
         try {
             return this.in.readObject();
         } catch (EOFException e) {
-            throw e;
+            return new Disconnect();
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
             System.out.println("Error while reading object.");

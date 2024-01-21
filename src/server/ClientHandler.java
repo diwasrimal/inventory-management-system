@@ -1,10 +1,10 @@
 package server;
 
-import java.io.EOFException;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import messages.Disconnect;
 import messages.ProductAddRequest;
 import utils.ObjStreams;
 import utils.Product;
@@ -34,21 +34,20 @@ class ClientHandler implements Runnable {
         System.out.println("Handling connection for client " + id + "...");
 
         while (true) {
-            try {
-                Object msg = this.streams.receiveMessage();
-                System.out.println(msg);
+            Object msg = this.streams.receiveMessage();
+            System.out.println(msg);
 
-                if (msg instanceof ProductAddRequest req) {
-                    Product prod = req.prod;
-                    try {
-                        this.db.addNewProduct(prod);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        System.out.println("Error while adding new product to database");
-                    }
-                }
-            } catch (EOFException e) {
+            if (msg instanceof Disconnect) {
                 break;
+
+            } else if (msg instanceof ProductAddRequest req) {
+                Product prod = req.prod;
+                try {
+                    this.db.addNewProduct(prod);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    System.out.println("Error while adding new product to database");
+                }
             }
         }
 
