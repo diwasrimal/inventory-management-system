@@ -6,6 +6,7 @@ import java.awt.event.*;
 
 import javax.swing.border.Border;
 
+import messages.ProductListRequest;
 import utils.Product;
 
 class ClientGui {
@@ -63,7 +64,7 @@ class ClientGui {
         JButton newProductButton = new JButton("+ New Product");
         JButton refreshButton = new JButton("Refresh");
         newProductButton.addActionListener(e -> this.card.show(this.frame.getContentPane(), "addPanel"));
-        refreshButton.addActionListener(e -> System.out.println("Refreshing product list..."));
+        refreshButton.addActionListener(e -> this.conn.sendMessage(new ProductListRequest()));
 
         addChildren(container, newProductButton, refreshButton, new JLabel("Main panel"));
         return container;

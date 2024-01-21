@@ -3,8 +3,11 @@ package server;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import utils.Product;
 
@@ -36,7 +39,7 @@ class ServerData {
      * Records a new product information in databse
      */
     void addNewProduct(Product prod) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO" +
+        PreparedStatement stmt = this.conn.prepareStatement("INSERT INTO" +
             " products(name, quantity, description) " +
             " VALUES(?, ?, ?)"
         );
@@ -51,11 +54,27 @@ class ServerData {
      * Changes quantity of product in database
      */
     void editProductQuantity(int id, int quantity) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("UPDATE products" +
+        PreparedStatement stmt = this.conn.prepareStatement("UPDATE products" +
             " SET quantity = ?" +
             " WHERE id = ?"
         );
         stmt.setInt(1, quantity);
         stmt.setInt(2, id);
+    }
+
+    List<Product> getProducts() throws SQLException {
+        Statement stmt = this.conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM products");
+        List<Product> products = new ArrayList<>();
+        while (rs.next()) {
+            Product prod = new Product(
+                rs.getInt("id"),
+                rs.getString("name"),
+                rs.getInt("quantity"),
+                rs.getString("description")
+            );
+            products.add(prod);
+        }
+        return products;
     }
 }

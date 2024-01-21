@@ -1,8 +1,12 @@
 package client;
 
+import java.util.List;
+
 import messages.Disconnect;
 import messages.FailureResponse;
+import messages.ProductListResponse;
 import messages.SuccessResponse;
+import utils.Product;
 
 /**
  * Takes in a GUI and reacts to incoming server messages,
@@ -31,6 +35,10 @@ class Reactor {
             if (msg instanceof Disconnect) {
                 this.gui.close();
                 break;
+            }
+            else if (msg instanceof ProductListResponse res) {
+                List<Product> products = res.products;
+                System.out.println(products);
             }
             else if (msg instanceof SuccessResponse) {
                 gui.showDialog("Success");

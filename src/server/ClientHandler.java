@@ -2,10 +2,13 @@ package server;
 
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 import messages.Disconnect;
 import messages.FailureResponse;
+import messages.ProductListRequest;
+import messages.ProductListResponse;
 import messages.ProductAddRequest;
 import messages.SuccessResponse;
 import utils.ObjStreams;
@@ -41,8 +44,8 @@ class ClientHandler implements Runnable {
 
             if (msg instanceof Disconnect) {
                 break;
-
-            } else if (msg instanceof ProductAddRequest req) {
+            }
+            else if (msg instanceof ProductAddRequest req) {
                 Product prod = req.prod;
                 try {
                     this.db.addNewProduct(prod);
@@ -52,6 +55,16 @@ class ClientHandler implements Runnable {
                     System.out.println("Error while adding new product to database");
                     this.streams.sendMessage(new FailureResponse());
                 }
+            }
+            else if (msg instanceof ProductListRequest) {
+                try {
+                    List<Product> products = this.db.getProducts();
+                    this.streams.sendMessage(new ProductListResponse(products));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    System.out.println("Error while retreiving products from database");
+                }
+
             }
         }
 
