@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import messages.Disconnect;
+import messages.FailureResponse;
 import messages.ProductAddRequest;
+import messages.SuccessResponse;
 import utils.ObjStreams;
 import utils.Product;
 
@@ -44,9 +46,11 @@ class ClientHandler implements Runnable {
                 Product prod = req.prod;
                 try {
                     this.db.addNewProduct(prod);
+                    this.streams.sendMessage(new SuccessResponse());
                 } catch (SQLException e) {
                     e.printStackTrace();
                     System.out.println("Error while adding new product to database");
+                    this.streams.sendMessage(new FailureResponse());
                 }
             }
         }

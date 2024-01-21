@@ -1,6 +1,8 @@
 package client;
 
 import messages.Disconnect;
+import messages.FailureResponse;
+import messages.SuccessResponse;
 
 /**
  * Takes in a GUI and reacts to incoming server messages,
@@ -29,6 +31,12 @@ class Reactor {
             if (msg instanceof Disconnect) {
                 this.gui.close();
                 break;
+            }
+            else if (msg instanceof SuccessResponse) {
+                gui.showDialog("Success");
+            }
+            else if (msg instanceof FailureResponse) {
+                gui.showDialog("Failure");
             }
 
             // TODO: handle other incoming messages
