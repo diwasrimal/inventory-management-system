@@ -19,15 +19,17 @@ class ServerData {
     /**
      * Initializes all required tables for database
      */
-    void initializeTables() throws SQLException {
+    private void initializeTables() throws SQLException {
         Statement stmt = this.conn.createStatement();
         stmt.executeUpdate("CREATE TABLE IF NOT EXISTS products (" +
             "id INT PRIMARY KEY AUTO_INCREMENT," +
             "name VARCHAR(40) NOT NULL," +
             "description VARCHAR(150)," +
-            "quantity INT DEFAULT 0" +
+            "quantity INT DEFAULT 0," +
+            "UNIQUE(name, description)" +
             ")"
         );
+        stmt.close();
     }
 
     /**
@@ -42,6 +44,7 @@ class ServerData {
         stmt.setInt(2, prod.quantity);
         stmt.setString(3, prod.description);
         stmt.executeUpdate();
+        stmt.close();
     }
 
     /**
