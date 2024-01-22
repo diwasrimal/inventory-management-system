@@ -6,8 +6,6 @@ import java.awt.event.*;
 
 import javax.swing.border.Border;
 
-import client.guiComponents.ProductEditPanel;
-import client.guiComponents.ProductAddPanel;
 import messages.ProductListRequest;
 import utils.Product;
 
@@ -77,7 +75,7 @@ class ClientGui {
         newProdButton.addActionListener(e -> showPage("addPage"));
         editProdButton.addActionListener(e -> showPage("editPage"));
         refreshButton.addActionListener(e -> this.conn.sendMessage(new ProductListRequest()));
-        GuiUtil.addChildren(container, newProdButton, editProdButton, refreshButton, new JLabel("Main panel"));
+        addChildren(container, newProdButton, editProdButton, refreshButton, new JLabel("Main panel"));
         return container;
     }
 
@@ -85,28 +83,50 @@ class ClientGui {
      * Makes a panel for adding a new product entry
      */
     private JPanel makeAddPage() {
-        ProductAddPanel adder = new ProductAddPanel();
-        adder.button.addActionListener(e -> {
-            Product prod = getProductFromFields(adder.name.field, adder.qty.field, adder.desc.field);
+        JTextField nameField = new JTextField(this.textFieldCols);
+        JTextField qtyField = new JTextField(this.textFieldCols / 2);
+        JTextArea descArea = new JTextArea(3, this.textFieldCols * 3);
+
+        JButton addButton = new JButton("Add");
+        addButton.addActionListener(e -> {
+            Product prod = getProductFromFields(nameField, qtyField, descArea);
             if (prod != null)
                 this.conn.sendProductAddRequest(prod);
         });
-        GuiUtil.addChildren(adder, makeBackButton());
-        return adder;
+
+        return makePanelWith(
+            makePanelWith(new JLabel("Name"), nameField),
+            makePanelWith(new JLabel("Quantity"), qtyField),
+            makePanelWith(new JLabel("Description"), descArea),
+            addButton,
+            makeBackButton()
+        );
     }
 
     /**
-     * Makes a panel for editing exisiting product
+     * Makes a panel for editing existing product
      */
     private JPanel makeEditPage() {
-        ProductEditPanel editor = new ProductEditPanel();
-        editor.button.addActionListener(e -> {
-            Product newProd = getProductFromFields(editor.name.field, editor.qty.field, editor.desc.field);
-            String prodId = editor.id.getText().trim();
+        JTextField idField = new JTextField(this.textFieldCols / 2);
+        JTextField nameField = new JTextField(this.textFieldCols);
+        JTextField qtyField = new JTextField(this.textFieldCols / 2);
+        JTextArea descArea = new JTextArea(3, this.textFieldCols * 3);
+
+        JButton editButton = new JButton("Add");
+        editButton.addActionListener(e -> {
+            String prodId = idField.getText().trim();
+            Product newProd = getProductFromFields(nameField, qtyField, descArea);
             // TODO: Send product edit request
         });
-        GuiUtil.addChildren(editor, makeBackButton());
-        return editor;
+
+        return makePanelWith(
+            makePanelWith(new JLabel("Product Id"), idField),
+            makePanelWith(new JLabel("Name"), nameField),
+            makePanelWith(new JLabel("Quantity"), qtyField),
+            makePanelWith(new JLabel("Description"), descArea),
+            editButton,
+            makeBackButton()
+        );
     }
 
     /**
@@ -150,5 +170,25 @@ class ClientGui {
 
     void showDialog(String message) {
         JOptionPane.showMessageDialog(this.frame, message);
+    }
+
+    /**
+     * Adds the given children to parent, by calling add() method
+     * multiple times
+     */
+    private void addChildren(JComponent parent, JComponent... children) {
+        for (JComponent child : children) {
+            parent.add(child);
+        }
+    }
+
+    /**
+     * Makes a new JPanel object with normal layout, adding the provided
+     * components
+     */
+    private JPanel makePanelWith(JComponent... children) {
+        JPanel parent = new JPanel();
+        addChildren(parent, children);
+        return parent;
     }
 }
