@@ -69,13 +69,31 @@ class ClientGui {
      * other operations and changing views using the card layout used by main frame.
      */
     private JPanel makeMainPage() {
+        JPanel container = new JPanel();
+        container.setLayout(new BorderLayout());
+        addPadding(container, 5);
+
         JButton newProdButton = new JButton("+ New Product");
         JButton editProdButton = new JButton("Edit Product");
         JButton refreshButton = new JButton("Refresh");
         newProdButton.addActionListener(e -> showPage("addPage"));
         editProdButton.addActionListener(e -> showPage("editPage"));
         refreshButton.addActionListener(e -> this.conn.sendMessage(new ProductListRequest()));
-        return makePanelWith(newProdButton, editProdButton, refreshButton, new JLabel("Main panel"));
+        JPanel controlPanel = makePanelWith(newProdButton, editProdButton, refreshButton);
+
+        container.add(controlPanel, BorderLayout.NORTH);
+        container.add(makeProductsPanel(), BorderLayout.CENTER);
+        return container;
+    }
+
+    private JPanel makeProductsPanel() {
+        JPanel container = new JPanel(new GridLayout(4, 4));
+        // TODO: put products got from server here
+        for (int i = 1; i <= 20; i++) {
+            container.add(new JButton("Product " + i));
+        }
+        container.setBorder(BorderFactory.createTitledBorder("Products"));
+        return container;
     }
 
     /**
@@ -192,5 +210,9 @@ class ClientGui {
         JPanel parent = new JPanel();
         addChildren(parent, children);
         return parent;
+    }
+
+    private void addPadding(JPanel panel, int pad) {
+        panel.setBorder(BorderFactory.createEmptyBorder(pad, pad, pad, pad));
     }
 }
