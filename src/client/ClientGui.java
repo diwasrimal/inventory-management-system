@@ -28,6 +28,7 @@ class ClientGui {
 
         this.frame = new JFrame("Inventory Management System");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setMinimumSize(new Dimension(600, 400));
         this.frame.setSize(this.width, this.height);
         this.card = new CardLayout();
         this.frame.setLayout(this.card);
