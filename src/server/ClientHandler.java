@@ -10,6 +10,7 @@ import messages.FailureResponse;
 import messages.ProductListRequest;
 import messages.ProductListResponse;
 import messages.ProductAddRequest;
+import messages.ProductEditRequest;
 import messages.SuccessResponse;
 import utils.ObjStreams;
 import utils.Product;
@@ -64,7 +65,16 @@ class ClientHandler implements Runnable {
                     e.printStackTrace();
                     System.out.println("Error while retreiving products from database");
                 }
-
+            }
+            else if (msg instanceof ProductEditRequest req) {
+                try {
+                    this.db.editProduct(req.prodId, req.newProd);
+                    this.streams.sendMessage(new SuccessResponse());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    System.out.println("Error while retreiving products from database");
+                    this.streams.sendMessage(new FailureResponse());
+                }
             }
         }
 

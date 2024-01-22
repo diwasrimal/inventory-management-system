@@ -51,15 +51,19 @@ class ServerData {
     }
 
     /**
-     * Changes quantity of product in database
+     * Edits exisiting product in database
      */
-    void editProductQuantity(int id, int quantity) throws SQLException {
+    void editProduct(int id, Product newProduct) throws SQLException {
         PreparedStatement stmt = this.conn.prepareStatement("UPDATE products" +
-            " SET quantity = ?" +
+            " SET name = ?, quantity = ?, description = ?" +
             " WHERE id = ?"
         );
-        stmt.setInt(1, quantity);
-        stmt.setInt(2, id);
+        stmt.setString(1, newProduct.name);
+        stmt.setInt(2, newProduct.quantity);
+        stmt.setString(3, newProduct.description);
+        stmt.setInt(4, id);
+        stmt.executeUpdate();
+        stmt.close();
     }
 
     List<Product> getProducts() throws SQLException {

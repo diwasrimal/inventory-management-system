@@ -6,6 +6,7 @@ import java.awt.event.*;
 
 import javax.swing.border.Border;
 
+import messages.ProductEditRequest;
 import messages.ProductListRequest;
 import utils.Product;
 
@@ -107,16 +108,19 @@ class ClientGui {
      * Makes a panel for editing existing product
      */
     private JPanel makeEditPage() {
+        // TODO: Make id unmodifiable (maybe by making it just a label)
+        // and prefill other fields based on selected product
         JTextField idField = new JTextField(this.textFieldCols / 2);
         JTextField nameField = new JTextField(this.textFieldCols);
         JTextField qtyField = new JTextField(this.textFieldCols / 2);
         JTextArea descArea = new JTextArea(3, this.textFieldCols * 3);
 
-        JButton editButton = new JButton("Add");
+        JButton editButton = new JButton("Edit");
         editButton.addActionListener(e -> {
-            String prodId = idField.getText().trim();
+            int prodId = Integer.parseInt(idField.getText().trim());
             Product newProd = getProductFromFields(nameField, qtyField, descArea);
-            // TODO: Send product edit request
+            if (newProd != null)
+                this.conn.sendMessage(new ProductEditRequest(prodId, newProd));
         });
 
         return makePanelWith(
