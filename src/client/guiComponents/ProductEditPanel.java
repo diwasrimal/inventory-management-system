@@ -21,6 +21,6 @@ public class ProductEditPanel extends JPanel {
         this.qty = new ProductQuantity();
         this.desc = new ProductDescription();
         this.button = new JButton("Edit");
-        GuiUtil.addChildren(this, new JLabel("Product Id"), this.id, this.name, this.desc, this.button);
+        GuiUtil.addChildren(this, new JLabel("Product Id"), this.id, this.name, this.qty, this.desc, this.button);
     }
 }
