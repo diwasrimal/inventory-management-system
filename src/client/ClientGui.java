@@ -68,16 +68,13 @@ class ClientGui {
      * other operations and changing views using the card layout used by main frame.
      */
     private JPanel makeMainPage() {
-        JPanel container = new JPanel();
         JButton newProdButton = new JButton("+ New Product");
         JButton editProdButton = new JButton("Edit Product");
         JButton refreshButton = new JButton("Refresh");
-
         newProdButton.addActionListener(e -> showPage("addPage"));
         editProdButton.addActionListener(e -> showPage("editPage"));
         refreshButton.addActionListener(e -> this.conn.sendMessage(new ProductListRequest()));
-        addChildren(container, newProdButton, editProdButton, refreshButton, new JLabel("Main panel"));
-        return container;
+        return makePanelWith(newProdButton, editProdButton, refreshButton, new JLabel("Main panel"));
     }
 
     /**
