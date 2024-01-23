@@ -19,8 +19,13 @@ class ClientGui {
     private final int height = 500;
     private final int width = 800;
     private final int textFieldCols = 15;
-    private final Border border = BorderFactory.createLineBorder(Color.black);
     private JPanel productsPanel;
+
+    // Fields for editing a product, these fields are put in editPage by makeEditPage()
+    private JLabel editingId = new JLabel();
+    private JTextField editingNameField = new JTextField(this.textFieldCols);
+    private JTextField editingQtyField = new JTextField(this.textFieldCols / 2);
+    private JTextArea editingDescArea = new JTextArea(3, this.textFieldCols * 3);
 
     /**
      * Initializes client connection and sets up main GUI frame and its layout
@@ -91,12 +96,10 @@ class ClientGui {
         addPadding(container, 5);
 
         JButton newProdButton = new JButton("+ New Product");
-        JButton editProdButton = new JButton("Edit Product");
         JButton refreshButton = new JButton("Refresh");
         newProdButton.addActionListener(e -> showPage("addPage"));
-        editProdButton.addActionListener(e -> showPage("editPage"));
         refreshButton.addActionListener(e -> this.conn.sendMessage(new ProductListRequest()));
-        JPanel controlPanel = makePanelWith(newProdButton, editProdButton, refreshButton);
+        JPanel controlPanel = makePanelWith(newProdButton, refreshButton);
 
         container.add(controlPanel, BorderLayout.NORTH);
         container.add(this.productsPanel, BorderLayout.CENTER);
@@ -107,11 +110,28 @@ class ClientGui {
      * Makes a panel with given product's information
      */
     private JPanel makeProductPanel(Product prod) {
-        JLabel id = new JLabel("Id: " + Integer.toString(prod.id));
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         JLabel name = new JLabel(prod.name);
-        JLabel qty = new JLabel("Quantity: " + Integer.toString(prod.quantity));
-        JLabel desc = new JLabel(prod.description);
-        return makePanelWith(id, name, qty, desc);
+        name.setFont(new Font("Sans", Font.PLAIN, 16));
+        JLabel qty = new JLabel("[qty]: " + Integer.toString(prod.quantity));
+        JLabel desc = new JLabel("[desc]: " + prod.description);
+        JButton edit = new JButton("Edit");
+        edit.addActionListener(e -> editProduct(prod));
+        addChildren(panel, name, qty, desc, edit);
+        return panel;
+    }
+
+    /**
+     * Opens up the editPage by setting the editing fields with given product's
+     * information
+     */
+    private void editProduct(Product prod) {
+        this.editingId.setText(Integer.toString(prod.id));
+        this.editingNameField.setText(prod.name);
+        this.editingQtyField.setText(Integer.toString(prod.quantity));
+        this.editingDescArea.setText(prod.description);
+        showPage("editPage");
     }
 
     /**
@@ -142,26 +162,21 @@ class ClientGui {
      * Makes a panel for editing existing product
      */
     private JPanel makeEditPage() {
-        // TODO: Make id unmodifiable (maybe by making it just a label)
-        // and prefill other fields based on selected product
-        JTextField idField = new JTextField(this.textFieldCols / 2);
-        JTextField nameField = new JTextField(this.textFieldCols);
-        JTextField qtyField = new JTextField(this.textFieldCols / 2);
-        JTextArea descArea = new JTextArea(3, this.textFieldCols * 3);
-
         JButton editButton = new JButton("Edit");
         editButton.addActionListener(e -> {
-            int prodId = Integer.parseInt(idField.getText().trim());
-            Product newProd = getProductFromFields(nameField, qtyField, descArea);
+            int prodId = Integer.parseInt(editingId.getText().trim());
+            Product newProd = getProductFromFields(
+                this.editingNameField, this.editingQtyField, this.editingDescArea
+            );
             if (newProd != null)
                 this.conn.sendMessage(new ProductEditRequest(prodId, newProd));
         });
 
         return makePanelWith(
-            makePanelWith(new JLabel("Product Id"), idField),
-            makePanelWith(new JLabel("Name"), nameField),
-            makePanelWith(new JLabel("Quantity"), qtyField),
-            makePanelWith(new JLabel("Description"), descArea),
+            makePanelWith(new JLabel("Product Id:"), this.editingId),
+            makePanelWith(new JLabel("Name"), this.editingNameField),
+            makePanelWith(new JLabel("Quantity"), this.editingQtyField),
+            makePanelWith(new JLabel("Description"), this.editingDescArea),
             editButton,
             makeBackButton()
         );
