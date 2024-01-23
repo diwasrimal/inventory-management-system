@@ -95,11 +95,12 @@ class ClientGui {
         container.setLayout(new BorderLayout());
         addPadding(container, 5);
 
-        JButton newProdButton = new JButton("+ New Product");
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton newProdButton = new JButton("+ New");
         JButton refreshButton = new JButton("Refresh");
         newProdButton.addActionListener(e -> showPage("addPage"));
         refreshButton.addActionListener(e -> this.conn.sendMessage(new ProductListRequest()));
-        JPanel controlPanel = makePanelWith(newProdButton, refreshButton);
+        addChildren(controlPanel, newProdButton, refreshButton);
 
         container.add(controlPanel, BorderLayout.NORTH);
         container.add(this.productsPanel, BorderLayout.CENTER);
