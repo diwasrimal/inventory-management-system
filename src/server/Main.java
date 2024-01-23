@@ -13,6 +13,8 @@ class Main {
 
         try {
             ServerData db = new ServerData(dbUrl, dbUser, dbPassword);
+            // db.addDummyProducts();
+
             ServerSock server = new ServerSock(serverPort, db);
             server.start();
             // TODO: Where to close connections ?

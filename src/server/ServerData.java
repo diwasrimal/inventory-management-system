@@ -33,7 +33,6 @@ class ServerData {
             ")"
         );
         stmt.close();
-        addDummyProducts();
     }
 
     /**
