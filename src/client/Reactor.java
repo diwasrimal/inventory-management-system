@@ -37,8 +37,8 @@ class Reactor {
                 break;
             }
             else if (msg instanceof ProductListResponse res) {
-                List<Product> products = res.products;
-                System.out.println(products);
+                System.out.println(res.products);
+                this.gui.refillProductsPanel(res.products);
             }
             else if (msg instanceof SuccessResponse) {
                 gui.showDialog("Success");
@@ -47,6 +47,7 @@ class Reactor {
                 gui.showDialog("Failure");
             }
 
+            // TODO: Maybe use a message inside Success and Failure responses
             // TODO: handle other incoming messages
         }
 

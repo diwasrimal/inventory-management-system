@@ -3,6 +3,7 @@ package client;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 
 import javax.swing.border.Border;
 
@@ -19,6 +20,7 @@ class ClientGui {
     private final int width = 800;
     private final int textFieldCols = 15;
     private final Border border = BorderFactory.createLineBorder(Color.black);
+    private JPanel productsPanel;
 
     /**
      * Initializes client connection and sets up main GUI frame and its layout
@@ -31,6 +33,8 @@ class ClientGui {
         this.frame.setMinimumSize(new Dimension(600, 400));
         this.frame.setSize(this.width, this.height);
         this.card = new CardLayout();
+        this.productsPanel = new JPanel(new GridLayout(4, 4));
+        this.productsPanel.setBorder(BorderFactory.createTitledBorder("Products"));
         this.frame.setLayout(this.card);
     }
 
@@ -65,6 +69,19 @@ class ClientGui {
     }
 
     /**
+     * Fills the product list in GUI, by making a panel for each given
+     * product
+     */
+    void refillProductsPanel(List<Product> products) {
+        this.productsPanel.removeAll();
+        for (Product prod : products) {
+            this.productsPanel.add(makeProductPanel(prod));
+        }
+        this.productsPanel.revalidate();
+        this.productsPanel.repaint();
+    }
+
+    /**
      * Makes the main page of GUI. This the first view. It contains buttons for doing
      * other operations and changing views using the card layout used by main frame.
      */
@@ -82,18 +99,19 @@ class ClientGui {
         JPanel controlPanel = makePanelWith(newProdButton, editProdButton, refreshButton);
 
         container.add(controlPanel, BorderLayout.NORTH);
-        container.add(makeProductsPanel(), BorderLayout.CENTER);
+        container.add(this.productsPanel, BorderLayout.CENTER);
         return container;
     }
 
-    private JPanel makeProductsPanel() {
-        JPanel container = new JPanel(new GridLayout(4, 4));
-        // TODO: put products got from server here
-        for (int i = 1; i <= 20; i++) {
-            container.add(new JButton("Product " + i));
-        }
-        container.setBorder(BorderFactory.createTitledBorder("Products"));
-        return container;
+    /**
+     * Makes a panel with given product's information
+     */
+    private JPanel makeProductPanel(Product prod) {
+        JLabel id = new JLabel("Id: " + Integer.toString(prod.id));
+        JLabel name = new JLabel(prod.name);
+        JLabel qty = new JLabel("Quantity: " + Integer.toString(prod.quantity));
+        JLabel desc = new JLabel(prod.description);
+        return makePanelWith(id, name, qty, desc);
     }
 
     /**
