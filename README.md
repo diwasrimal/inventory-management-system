@@ -20,3 +20,18 @@ Much quicker if you have a unix shell, no need to compile manually
 $ ./run.sh server
 $ ./run.sh client
 ```
+
+### Structure
+```
+.
+├── ...
+├── lib (jar files)
+└── src
+    ├── client
+    ├── server
+    ├── messages (serializable classes for client-server communication)
+    └── utils (common classes for client and server)
+```
+
+### License
+Licensed under MIT License, © Diwas Rimal, 2024
