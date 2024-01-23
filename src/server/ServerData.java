@@ -33,6 +33,7 @@ class ServerData {
             ")"
         );
         stmt.close();
+        addDummyProducts();
     }
 
     /**
@@ -63,6 +64,20 @@ class ServerData {
         stmt.setString(3, newProduct.description);
         stmt.setInt(4, id);
         stmt.executeUpdate();
+        stmt.close();
+    }
+
+    void addDummyProducts() throws SQLException {
+        PreparedStatement stmt = this.conn.prepareStatement("INSERT INTO" +
+            " products(name, quantity, description) " +
+            " VALUES(?, ?, ?)"
+        );
+        for (Product dummy : Product.dummies) {
+            stmt.setString(1, dummy.name);
+            stmt.setInt(2, dummy.quantity);
+            stmt.setString(3, dummy.description);
+            stmt.executeUpdate();
+        }
         stmt.close();
     }
 

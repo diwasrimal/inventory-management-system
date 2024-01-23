@@ -6,7 +6,7 @@ import java.sql.SQLException;
 class Main {
     public static void main(String[] args) {
         final int serverPort = 6969;
-        final String dbName = "jdbc_test";
+        final String dbName = "inventory";
         final String dbUrl = "jdbc:mysql://localhost:3306/" + dbName;
         final String dbUser = "diwas";
         final String dbPassword = "";
