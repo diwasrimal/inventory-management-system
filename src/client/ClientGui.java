@@ -115,8 +115,8 @@ class ClientGui {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         JLabel name = new JLabel(prod.name);
         name.setFont(new Font("Sans", Font.PLAIN, 16));
-        JLabel qty = new JLabel("[qty]: " + Integer.toString(prod.quantity));
-        JLabel desc = new JLabel("[desc]: " + prod.description);
+        JLabel qty = new JLabel(Integer.toString(prod.quantity) + " piece(s)");
+        JLabel desc = new JLabel(prod.description);
         JButton edit = new JButton("Edit");
         edit.addActionListener(e -> editProduct(prod));
         addChildren(panel, name, qty, desc, edit);
