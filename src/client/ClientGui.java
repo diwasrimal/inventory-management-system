@@ -19,7 +19,7 @@ class ClientGui {
     private final int height = 500;
     private final int width = 800;
     private final int textFieldCols = 15;
-    private JPanel productsPanel;
+    private JPanel productsPanel; // TODO: make this scrollable
 
     // Fields for editing a product, these fields are put in editPage by makeEditPage()
     private JLabel editingId = new JLabel();
@@ -118,8 +118,15 @@ class ClientGui {
         JLabel qty = new JLabel(Integer.toString(prod.quantity) + " piece(s)");
         JLabel desc = new JLabel(prod.description);
         JButton edit = new JButton("Edit");
+        JButton delete = new JButton("Delete");
         edit.addActionListener(e -> editProduct(prod));
-        addChildren(panel, name, qty, desc, edit);
+        delete.addActionListener(e -> {
+            int result = JOptionPane.showConfirmDialog(this.frame, "Sure?", "Warning", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                this.conn.sendProductDeleteRequest(prod.id);
+            }
+        });
+        addChildren(panel, name, qty, desc, makePanelWith(edit, delete));
         return panel;
     }
 

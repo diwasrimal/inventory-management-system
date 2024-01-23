@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 import utils.ObjStreams;
 import utils.Product;
 import messages.ProductAddRequest;
+import messages.ProductDeleteRequest;
 
 class ClientSock {
     private Socket sock;
@@ -39,6 +40,13 @@ class ClientSock {
      */
     void sendProductAddRequest(Product prod) {
         this.streams.sendMessage(new ProductAddRequest(prod));
+    }
+
+    /**
+     * Sends message to server for deleting a product
+     */
+    void sendProductDeleteRequest(int prodId) {
+        this.streams.sendMessage(new ProductDeleteRequest(prodId));
     }
 
     void sendMessage(Object msg) {

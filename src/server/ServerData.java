@@ -66,6 +66,16 @@ class ServerData {
         stmt.close();
     }
 
+    /**
+     * Deletes existing product in database
+     */
+    void deleteProduct(int id) throws SQLException {
+        PreparedStatement stmt = this.conn.prepareStatement("DELETE FROM products WHERE id = ?");
+        stmt.setInt(1, id);
+        stmt.executeUpdate();
+        stmt.close();
+    }
+
     void addDummyProducts() throws SQLException {
         PreparedStatement stmt = this.conn.prepareStatement("INSERT INTO" +
             " products(name, quantity, description) " +

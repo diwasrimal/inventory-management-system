@@ -10,6 +10,7 @@ import messages.FailureResponse;
 import messages.ProductListRequest;
 import messages.ProductListResponse;
 import messages.ProductAddRequest;
+import messages.ProductDeleteRequest;
 import messages.ProductEditRequest;
 import messages.SuccessResponse;
 import utils.ObjStreams;
@@ -54,6 +55,16 @@ class ClientHandler implements Runnable {
                 } catch (SQLException e) {
                     e.printStackTrace();
                     System.out.println("Error while adding new product to database");
+                    this.streams.sendMessage(new FailureResponse());
+                }
+            }
+            else if (msg instanceof ProductDeleteRequest req) {
+                try {
+                    this.db.deleteProduct(req.prodId);
+                    this.streams.sendMessage(new SuccessResponse());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    System.out.println("Error while deleting product from database");
                     this.streams.sendMessage(new FailureResponse());
                 }
             }
