@@ -4,7 +4,7 @@ This is a simple inventory management system, which uses Swing
 for the GUI, JDBC for managing MySQL database and socket programming
 for handling client-server communications.
 
-Work In Progress...
+https://github.com/diwasrimal/inventory-management-system/assets/84910758/1acc0fa5-bbdb-41b0-92a4-bf6e597bacfe
 
 ### Setup
 ```
