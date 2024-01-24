@@ -1,6 +1,7 @@
 package client;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -14,10 +15,9 @@ class ClientGui {
     final ClientSock conn;
     private JFrame frame;
     private CardLayout card;
-    private final int height = 500;
-    private final int width = 800;
+    private Dimension windowSize = new Dimension(1000, 700);
     private final int textFieldCols = 15;
-    private JPanel productsPanel; // TODO: make this scrollable
+    private JPanel productsGrid;
 
     // Fields for editing a product, these fields are put in editPage by makeEditPage()
     private JLabel editingId = new JLabel();
@@ -33,11 +33,10 @@ class ClientGui {
 
         this.frame = new JFrame("Inventory Management System");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.frame.setMinimumSize(new Dimension(600, 400));
-        this.frame.setSize(this.width, this.height);
+        this.frame.setMinimumSize(this.windowSize);
+        this.frame.setSize(this.windowSize);
         this.card = new CardLayout();
-        this.productsPanel = new JPanel(new GridLayout(4, 4));
-        this.productsPanel.setBorder(BorderFactory.createTitledBorder("Products"));
+        this.productsGrid = new JPanel(new GridLayout(0, 3, 10, 10));
         this.frame.setLayout(this.card);
     }
 
@@ -76,12 +75,12 @@ class ClientGui {
      * product
      */
     void refillProductsPanel(List<Product> products) {
-        this.productsPanel.removeAll();
+        this.productsGrid.removeAll();
         for (Product prod : products) {
-            this.productsPanel.add(makeProductPanel(prod));
+            this.productsGrid.add(makeProductPanel(prod));
         }
-        this.productsPanel.revalidate();
-        this.productsPanel.repaint();
+        this.productsGrid.revalidate();
+        this.productsGrid.repaint();
     }
 
     /**
@@ -100,8 +99,16 @@ class ClientGui {
         refreshButton.addActionListener(e -> this.conn.sendMessage(new ProductListRequest()));
         addChildren(controlPanel, newProdButton, refreshButton);
 
+        // Scrollable grid for showing products
+        JScrollPane productList = new JScrollPane(
+            this.productsGrid,
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
+        productList.setBorder(BorderFactory.createTitledBorder("Products"));
+
         container.add(controlPanel, BorderLayout.NORTH);
-        container.add(this.productsPanel, BorderLayout.CENTER);
+        container.add(productList, BorderLayout.CENTER);
         return container;
     }
 
@@ -116,6 +123,9 @@ class ClientGui {
         name.setFont(new Font("Sans", Font.PLAIN, 16));
         JLabel qty = new JLabel(Integer.toString(prod.quantity) + " piece(s)");
         JLabel desc = new JLabel(prod.description);
+        Dimension descSize = desc.getPreferredSize();
+        descSize.width = 300;
+        desc.setPreferredSize(descSize);
 
         JButton edit = new JButton("Edit");
         JButton delete = new JButton("Delete");
@@ -126,7 +136,15 @@ class ClientGui {
                 this.conn.sendProductDeleteRequest(prod.id);
             }
         });
-        addChildren(panel, name, qty, desc, makePanelWith(edit, delete));
+
+        addChildren(
+            panel,
+            makePanelWith(name),
+            makePanelWith(qty),
+            makePanelWith(desc),
+            makePanelWith(edit, delete)
+        );
+        panel.setBorder(BorderFactory.createLineBorder(Color.black));
         return panel;
     }
 
