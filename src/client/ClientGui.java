@@ -111,10 +111,12 @@ class ClientGui {
     private JPanel makeProductPanel(Product prod) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
         JLabel name = new JLabel(prod.name);
         name.setFont(new Font("Sans", Font.PLAIN, 16));
         JLabel qty = new JLabel(Integer.toString(prod.quantity) + " piece(s)");
         JLabel desc = new JLabel(prod.description);
+
         JButton edit = new JButton("Edit");
         JButton delete = new JButton("Delete");
         edit.addActionListener(e -> editProduct(prod));
@@ -151,8 +153,12 @@ class ClientGui {
         JButton addButton = new JButton("Add");
         addButton.addActionListener(e -> {
             Product prod = getProductFromFields(nameField, qtyField, descArea);
-            if (prod != null)
+            if (prod != null) {
                 this.conn.sendProductAddRequest(prod);
+                nameField.setText("");
+                qtyField.setText("");
+                descArea.setText("");
+            }
         });
 
         return makePanelWith(
