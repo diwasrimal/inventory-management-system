@@ -5,8 +5,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 
-import javax.swing.border.Border;
-
 import messages.ProductEditRequest;
 import messages.ProductListRequest;
 import utils.Product;
@@ -203,7 +201,7 @@ class ClientGui {
      * Shows one of the panels that were added to main frame
      * using card layout.
      */
-    void showPage(String pageLabel) {
+    private void showPage(String pageLabel) {
         this.card.show(this.frame.getContentPane(), pageLabel);
     }
 

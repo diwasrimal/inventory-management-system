@@ -1,12 +1,9 @@
 package client;
 
-import java.util.List;
-
 import messages.Disconnect;
 import messages.FailureResponse;
 import messages.ProductListResponse;
 import messages.SuccessResponse;
-import utils.Product;
 
 /**
  * Takes in a GUI and reacts to incoming server messages,
@@ -14,13 +11,17 @@ import utils.Product;
  * GUI is closed on receiving a disconnect message.
  */
 class Reactor {
-    ClientGui gui;
+    private ClientGui gui;
 
     Reactor(ClientGui gui) {
         this.gui = gui;
         listenAndReact();
     }
 
+    /**
+     * Listens for server messages and reacts based on the message,
+     * by calling GUI methods
+     */
     void listenAndReact() {
         if (this.gui.conn == null) {
             System.out.println("gui.conn == null");
@@ -48,7 +49,6 @@ class Reactor {
             }
 
             // TODO: Maybe use a message inside Success and Failure responses
-            // TODO: handle other incoming messages
         }
 
         System.out.println("Not listening and reacting anymore...");

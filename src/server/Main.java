@@ -17,7 +17,6 @@ class Main {
 
             ServerSock server = new ServerSock(serverPort, db);
             server.start();
-            // TODO: Where to close connections ?
             
         } catch (SQLException e) {
             e.printStackTrace();
