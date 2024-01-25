@@ -45,7 +45,7 @@ Then open `doc/index.html` in browser.
 
 The server side contains four files
 ```
-``src/server
+src/server
 ├── ClientHandler.java
 ├── Main.java
 ├── ServerData.java
@@ -53,8 +53,8 @@ The server side contains four files
 ```
 
 `Main.java` is the entry point of server, which initializes `ServerData` and `ServerSock` objects.
-The database is handled by `ServerData` which is provided as an argument to `ServerSock`, the
-which is responsible for handling clients by creating a new `ClientHandler` objects for each connected
+The database is handled by `ServerData` which is provided as an argument to `ServerSock`,
+which is responsible for handling clients by creating a new `ClientHandler` object for each connected
 client. The `ClientHandler` object implements the `Runnable` interface which allows each client to
 be handled in separate thread.
 
@@ -71,12 +71,12 @@ src/client
 └── Reactor.java
 ```
 
-Again `Main.java` is the entry point. `Main.java` first makes a connection to server on port `4000`
-with `ClientSock`. `ClientSock` establishes the server connection and contains object streams for communication.
-It also contains methods that are invoked by `ClientGui` object. Allowing communication from GUI to server.
+Again `Main.java` is the entry point. `Main.java` first makes a connection to server with `ClientSock`.
+`ClientSock` establishes the server connection and contains object streams for communication.
+It also contains methods that later will be invoked by `ClientGui` for communicating with server.
 
-`Reactor` listens for server messages and reacts to those messages, by invoking some GUI methods. It takes `ClientGui`
-as an argument and changes the GUI based on incoming server messages.
+`Reactor` listens for server messages and reacts to those messages, by invoking some GUI methods.
+It takes `ClientGui` as an argument and changes the GUI based on incoming server messages.
 
 #### Utils
 ```
@@ -85,9 +85,13 @@ src/utils
 └── Product.java
 ```
 This package contains common class definitions that are used by both client and server. It contains `ObjStreams` which
-makes a pair of `ObjectInputStream` and `ObjectOutputStream` for communication.
+makes a pair of `ObjectInputStream` and `ObjectOutputStream` for communication. It also defines
+`Product` which we store in our inventory
 
 #### Messages
+Contains serializable classes used for client server communication. Each message type implements the `java.io.Serializable`
+interface.
+
 ```
 src/messages
 ├── Disconnect.java
@@ -99,8 +103,6 @@ src/messages
 ├── ProductListResponse.java
 └── SuccessResponse.java
 ```
-These are serializable classes used for client server communication. Each message type implements the `java.io.Serializable`
-interface.
 
 | Message Type                | Sender            | Usage                                                                       |
 |-----------------------------|-------------------|-----------------------------------------------------------------------------|
